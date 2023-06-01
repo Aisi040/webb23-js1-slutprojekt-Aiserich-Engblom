@@ -17,7 +17,6 @@ document.getElementById('weatherForm').addEventListener('submit', function(event
   // Hämta aktuellt väder och väderprognos
   Promise.all([fetchCurrentWeather(city, apiKey), fetchWeatherForecast(city, apiKey)])
     .then(function([currentWeatherData, forecastData]) {
-      displayCurrentWeather(currentWeatherData); // Visa aktuellt väder
       displayWeatherForecast(forecastData); // Visa väderprognos
     })
     .catch(function(error) {
