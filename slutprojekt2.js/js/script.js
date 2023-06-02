@@ -45,7 +45,6 @@ function fetchCurrentWeather(city, apiKey) {
     });
 }
 
-
 // Funktion för att hämta väderprognos
 function fetchWeatherForecast(city, apiKey) {
   let hours = parseInt(document.getElementById('hoursInput').value) || 0;
@@ -69,23 +68,16 @@ function fetchWeatherForecast(city, apiKey) {
       for (let i = 0; i <= hours; i++) {
         let forecastIndex = currentHour + i; // Använd nuvarande timme och i för att hitta rätt prognos
         let forecastTime = new Date(currentTime.getTime() + i * 60 * 60 * 1000); // Tid för varje prognos framåt
-        let time = formatTime(forecastTime.getHours(), forecastTime.getMinutes()); // Formatera tiden som "HH:MM"
+        let time = formatTime(forecastTime.getHours(), forecastTime.getMinutes());
+        let description = forecastList[forecastIndex].weather[0].description;
         let temperature = (forecastList[forecastIndex].main.temp - 273.15).toFixed(1);
         let windSpeed = forecastList[forecastIndex].wind.speed;
         let weatherIcon = forecastList[forecastIndex].weather[0].icon;
-        let description = forecastList[forecastIndex].weather[0].description;
-        forecastData.push({ time, temperature, windSpeed, weatherIcon, description });
+        forecastData.push({ time, description, temperature, windSpeed, weatherIcon });
       }
 
       return forecastData;
     });
-}
-
-// Funktion för att formatera tiden som "HH:MM"
-function formatTime(hours, minutes) {
-  let formattedHours = hours < 10 ? '0' + hours : hours;
-  let formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
-  return formattedHours + ':' + formattedMinutes;
 }
 
 // Funktion för att visa aktuellt väder
@@ -96,92 +88,91 @@ function displayCurrentWeather(currentWeatherData) {
   let weatherInfoDiv = document.createElement('div');
   weatherInfoDiv.classList.add('weather-info');
 
-  let iconImg = document.createElement('img');
-  iconImg.src = 'http://openweathermap.org/img/wn/' + currentWeatherData.weatherIcon + '.png';
-  iconImg.alt = 'Weather Icon';
-  weatherInfoDiv.append(iconImg);
+  let weatherIcon = document.createElement('img');
+  weatherIcon.src = 'https://openweathermap.org/img/wn/' + currentWeatherData.weatherIcon + '@2x.png';
+  weatherIcon.alt = currentWeatherData.description;
+  weatherInfoDiv.append(weatherIcon);
 
-  let descriptionPara = document.createElement('p');
-  descriptionPara.innerHTML = '<strong>Description:</strong> ' + currentWeatherData.description;
-  weatherInfoDiv.append(descriptionPara);
+  let descriptionP = document.createElement('p');
+  descriptionP.textContent = currentWeatherData.description;
+  weatherInfoDiv.append(descriptionP);
 
-  let temperaturePara = document.createElement('p');
-  temperaturePara.innerHTML = '<strong>Temperature:</strong> ' + currentWeatherData.temperature + ' °C';
-  weatherInfoDiv.append(temperaturePara);
+  let temperatureP = document.createElement('p');
+  temperatureP.textContent = currentWeatherData.temperature + '°C';
+  weatherInfoDiv.append(temperatureP);
 
-  let windSpeedPara = document.createElement('p');
-  windSpeedPara.innerHTML = '<strong>Wind Speed:</strong> ' + currentWeatherData.windSpeed + ' m/s';
-  weatherInfoDiv.append(windSpeedPara);
-
-  let currentTime = new Date();
-  let timePara = document.createElement('p');
-  timePara.innerHTML = '<strong>Current Time:</strong> ' + formatTime(currentTime.getHours(), currentTime.getMinutes());
-  weatherInfoDiv.append(timePara);
+  let windSpeedP = document.createElement('p');
+  windSpeedP.textContent = 'Wind: ' + currentWeatherData.windSpeed + ' m/s';
+  weatherInfoDiv.append(windSpeedP);
 
   resultDiv.append(weatherInfoDiv);
 
-  // Försvinnande bakgrundsfärg baserat på temperatur
-  let temperature = currentWeatherData.temperature;
+  // Ändring börjar här:
+  // Ta bort tidigare kod för att ändra bakgrundsfärg baserat på temperatur.
+  // Istället, ändra bakgrundsfärg baserat på väderbeskrivning.
+  let description = currentWeatherData.description;
   let color = '';
 
-  if (temperature <= 0) {
-    color = '#85c1e9'; // Ljusblå för kallt väder
-  } else if (temperature > 0 && temperature <= 20) {
-    color = '#f7dc6f'; // Ljusgul för milt väder
-  } else {
-    color = '#e74c3c'; // Ljusröd för varmt väder
+  if (description.includes("clear")) {
+    color = '#85c1e9'; 
+  } else if (description.includes("clouds")) {
+    color = '#f7dc6f';
+  } else if (description.includes("rain") || description.includes("thunderstorm")) {
+    color = '#e74c3c';
   }
 
-  animateBackgroundColor(weatherInfoDiv, color); // Animerar bakgrundsfärgen
+  changeBackgroundColor(weatherInfoDiv, color); 
 
-  // Återställ bakgrundsfärgen efter 5 sekunder
   setTimeout(function() {
-    weatherInfoDiv.style.backgroundColor = '';
+    resetBackgroundColor(weatherInfoDiv);
   }, 5000);
-}
-
-// Funktion för att animera bakgrundsfärgen för ett element
-function animateBackgroundColor(element, color) {
-  element.classList.add('animate'); // Lägger till en klass för animering
-  element.style.backgroundColor = color;
-}
-
-// Återställ bakgrundsfärgen efter animation
-function resetBackgroundColor(element) {
-  element.classList.remove('animate');
-  element.style.backgroundColor = '';
 }
 
 // Funktion för att visa väderprognos
 function displayWeatherForecast(forecastData) {
-  let resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = '';
+  let forecastDiv = document.getElementById('forecast');
+  forecastDiv.innerHTML = '';
 
-  forecastData.forEach(function(forecast) {
-    let forecastDiv = document.createElement('div');
-    forecastDiv.classList.add('forecast-info');
+  for (let forecast of forecastData) {
+    let forecastInfoDiv = document.createElement('div');
+    forecastInfoDiv.classList.add('forecast-info');
 
-    let timePara = document.createElement('p');
-    timePara.innerHTML = forecast.time + 'h';
-    forecastDiv.append(timePara);
+    let timeP = document.createElement('p');
+    timeP.textContent = forecast.time;
+    forecastInfoDiv.appendChild(timeP);
 
-    let temperaturePara = document.createElement('p');
-    temperaturePara.innerHTML = '<strong>Temperature:</strong> ' + forecast.temperature + ' °C';
-    forecastDiv.append(temperaturePara);
+    let weatherIcon = document.createElement('img');
+    weatherIcon.src = 'https://openweathermap.org/img/wn/' + forecast.weatherIcon + '@2x.png';
+    weatherIcon.alt = forecast.description;
+    forecastInfoDiv.appendChild(weatherIcon);
 
-    let windSpeedPara = document.createElement('p');
-    windSpeedPara.innerHTML = '<strong>Wind Speed:</strong> ' + forecast.windSpeed + ' m/s';
-    forecastDiv.append(windSpeedPara);
+    let descriptionP = document.createElement('p');
+    descriptionP.textContent = forecast.description;
+    forecastInfoDiv.appendChild(descriptionP);
 
-    let iconImg = document.createElement('img');
-    iconImg.src = 'http://openweathermap.org/img/wn/' + forecast.weatherIcon + '.png';
-    iconImg.alt = 'Weather Icon';
-    forecastDiv.append(iconImg);
+    let temperatureP = document.createElement('p');
+    temperatureP.textContent = forecast.temperature + '°C';
+    forecastInfoDiv.appendChild(temperatureP);
 
-    let descriptionPara = document.createElement('p');
-    descriptionPara.innerHTML = '<strong>Description:</strong> ' + forecast.description;
-    forecastDiv.append(descriptionPara);
+    let windSpeedP = document.createElement('p');
+    windSpeedP.textContent = 'Wind: ' + forecast.windSpeed + ' m/s';
+    forecastInfoDiv.appendChild(windSpeedP);
 
-    resultDiv.append(forecastDiv);
-  });
+    forecastDiv.append(forecastInfoDiv);
+  }
+}
+
+// Funktion för att formatera tid
+function formatTime(hours, minutes) {
+  return (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+}
+
+// Funktion för att ändra bakgrundsfärg
+function changeBackgroundColor(element, color) {
+  element.style.backgroundColor = color;
+}
+
+// Funktion för att återställa bakgrundsfärg
+function resetBackgroundColor(element) {
+  element.style.backgroundColor = '';
 }
