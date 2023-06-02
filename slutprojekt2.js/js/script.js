@@ -64,16 +64,22 @@ function fetchWeatherForecast(city, apiKey) {
       let currentTime = new Date(); // Aktuell tid när användaren trycker på "Get Weather"
       let currentHour = currentTime.getHours(); // Aktuell timme när användaren trycker på "Get Weather"
 
+      let numberOfForecasts = Math.ceil(hours / 3); // Beräkna antalet prognoser vi vill visa
+
       // Extrahera relevant väderprognosdata baserat på antalet timmar och aktuell tid
-      for (let i = 0; i <= hours; i++) {
-        let forecastIndex = currentHour + i; // Använd nuvarande timme och i för att hitta rätt prognos
-        let forecastTime = new Date(currentTime.getTime() + i * 60 * 60 * 1000); // Tid för varje prognos framåt
-        let time = formatTime(forecastTime.getHours(), forecastTime.getMinutes());
-        let description = forecastList[forecastIndex].weather[0].description;
+      for (let i = 0; i < numberOfForecasts; i++) {
+        let forecastIndex = currentHour + i * 3; // Använd nuvarande timme och i för att hitta rätt prognos
+        if (forecastIndex >= forecastList.length) { // Säkerställ att vi inte går utanför listans gränser
+          break;
+        }
+
+        let forecastTime = new Date(currentTime.getTime() + i * 3 * 60 * 60 * 1000); // Tid för varje prognos framåt
+        let time = formatTime(forecastTime.getHours(), forecastTime.getMinutes()); // Formatera tiden som "HH:MM"
         let temperature = (forecastList[forecastIndex].main.temp - 273.15).toFixed(1);
         let windSpeed = forecastList[forecastIndex].wind.speed;
         let weatherIcon = forecastList[forecastIndex].weather[0].icon;
-        forecastData.push({ time, description, temperature, windSpeed, weatherIcon });
+        let description = forecastList[forecastIndex].weather[0].description;
+        forecastData.push({ time, temperature, windSpeed, weatherIcon, description });
       }
 
       return forecastData;
