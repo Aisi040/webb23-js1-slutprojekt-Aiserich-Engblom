@@ -55,7 +55,21 @@ button {
   margin-bottom: 20px;
 }
 
-
 .error-message {
   color: red;
+}
+
+.weather-info.cold-weather {
+  background-color: #85c1e9; /* Ljusblå för kallt väder */
+}
+
+.weather-info.mild-weather {
+  background-color: #f7dc6f; /* Ljusgul för milt väder */
+}
+
+.weather-info.hot-weather {
+  background-color: #e74c3c; /* Ljusröd för varmt väder */
+}
+.weather-info.animate {
+  transition: background-color 0.5s ease;
 }

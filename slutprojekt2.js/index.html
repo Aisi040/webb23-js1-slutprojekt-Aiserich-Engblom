@@ -11,16 +11,15 @@
 </head>
 <body>
   <div class="container">
-    <h1>Weather Application</h1>
+    <h1>Väderapplikation</h1>
+  
     <form id="weatherForm">
-      <input id="cityInput" type="text" placeholder="Enter city name">
-      <input id="hoursInput" type="number" placeholder="Enter number of hours">
+      <input type="text" id="cityInput" placeholder="Enter city name" required>
+      <input type="number" id="hoursInput" placeholder="Enter number of hours" required>
       <button type="submit">Get Weather</button>
     </form>
-    <div id="currentWeather"></div>
-    <div id="weatherForecast"></div>
+    
     <div id="result"></div>
-
   </div>
 </body>
 </html>
