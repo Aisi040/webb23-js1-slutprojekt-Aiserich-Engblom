@@ -19,7 +19,6 @@ document.getElementById('weatherForm').addEventListener('submit', function(event
     resultDiv.innerHTML = '<p class="error-message">Please enter a city name.</p>';
     return;
   }
-
   // Hämta aktuellt väder och väderprognos
   Promise.all([fetchCurrentWeather(city, apiKey), fetchWeatherForecast(city, apiKey)])
     .then(function([currentWeatherData, forecastData]) {
