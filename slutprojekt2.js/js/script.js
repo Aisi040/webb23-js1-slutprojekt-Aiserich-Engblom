@@ -6,9 +6,16 @@ document.getElementById('weatherForm').addEventListener('submit', function(event
   let city = document.getElementById('cityInput').value;
   let apiKey = 'e652f2abd85b6a6a475e0568d8dc42b9';
 
+  // Hämta DOM-element för resultat och prognos
+  let resultDiv = document.getElementById('result');
+  let forecastDiv = document.getElementById('forecast');
+
+  // Rensa tidigare resultat och prognos
+  resultDiv.innerHTML = '';
+  forecastDiv.innerHTML = '';
+
   // Validera stadsinput
   if (!city) {
-    let resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '<p class="error-message">Please enter a city name.</p>';
     return;
   }
@@ -20,11 +27,9 @@ document.getElementById('weatherForm').addEventListener('submit', function(event
       displayWeatherForecast(forecastData); // Visa väderprognos
     })
     .catch(function(error) {
-      let resultDiv = document.getElementById('result');
       resultDiv.innerHTML = '<p class="error-message">Error: ' + error.message + '</p>';
     });
 });
-
 // Funktion för att hämta aktuellt väder
 function fetchCurrentWeather(city, apiKey) {
   let url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + apiKey;
