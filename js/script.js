@@ -149,24 +149,24 @@ function displayWeatherForecast(forecastData) {
 
     let timeP = document.createElement('p');
     timeP.textContent = forecast.time;
-    forecastInfoDiv.appendChild(timeP);
+    forecastInfoDiv.append(timeP);
 
     let weatherIcon = document.createElement('img');
     weatherIcon.src = 'https://openweathermap.org/img/wn/' + forecast.weatherIcon + '@2x.png';
     weatherIcon.alt = forecast.description;
-    forecastInfoDiv.appendChild(weatherIcon);
+    forecastInfoDiv.append(weatherIcon);
 
     let descriptionP = document.createElement('p');
     descriptionP.textContent = forecast.description;
-    forecastInfoDiv.appendChild(descriptionP);
+    forecastInfoDiv.append(descriptionP);
 
     let temperatureP = document.createElement('p');
     temperatureP.textContent = forecast.temperature + '°C';
-    forecastInfoDiv.appendChild(temperatureP);
+    forecastInfoDiv.append(temperatureP);
 
     let windSpeedP = document.createElement('p');
     windSpeedP.textContent = 'Wind: ' + forecast.windSpeed + ' m/s';
-    forecastInfoDiv.appendChild(windSpeedP);
+    forecastInfoDiv.append(windSpeedP);
 
     forecastDiv.append(forecastInfoDiv);
   }
